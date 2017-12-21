@@ -1,0 +1,10 @@
+--------------------------------------------CASOS DE PRUEBA----------------------------------------------
+-------------------Se marca con un guion todas aquellas que ha sido probadas y validadas-----------------
+
+- 1.  Ganas y pierdes de manera correcta en Game2048
+- 2.  Ganas y pierdes de manera correcta en GameFib
+- 3.  Ganas y pierdes de manera correcta en GameInverse
+- 4.  Muestreo de que todos los mensajes de textos o errores se muestre bien.
+5.  Que todos los sout esten en controller y no haya ninguno fuera de este.
+- 6.  Comprobar que al iniciar play se ejecutan con las celdas, board y seed determinadas por teclado.
+7.  Resolver dudas de dudas.txt
