@@ -36,7 +36,7 @@ public class PlayCommand extends Command {
      * @return Command --> Devuelve el objeto Command tratado y si no es perteneciente a este commando return: null
      */
     @Override
-    public Command parse(String[] commandWords, Controller controller) {
+    public Command parse(String[] commandWords, Controller controller){
         if (!this.commandName.equals(commandWords[0]) && commandWords.length == 1) {
             if(!controller.isDoPrintAuxText()){
                 controller.iniTextUnknown();
@@ -67,56 +67,69 @@ public class PlayCommand extends Command {
      * @param game Game --> Juego al que le afecta la accion a realizar.
      * @param controller Controller --> Entorno al que se refiere o en donde se realiza la accion.
      */
-    public void execute(Game game, Controller controller)
-    {
-        Scanner in = new Scanner(System.in);
+    public void execute(Game game, Controller controller) {
+
+        boolean validInput = true;
 
         // CONTROL DE SIZE
-
-        System.out.print("Please enter the size of the board: ");
-        String auxBoardSize = in.nextLine();
+        controller.printSoutText("Please enter the size of the board: ");
+        String auxBoardSize = controller.readLineScanner();
 
         if(auxBoardSize.isEmpty()){
             game.setSize(this.defaultBoardSize);
             auxBoardSize = String.valueOf(this.defaultBoardSize);
-            System.out.println("Using the default size of the board: " + this.defaultBoardSize);
+            controller.printSoutText("Using the default size of the board: " + this.defaultBoardSize);
         }
         else {
-            while (Integer.parseInt(auxBoardSize) <= 1) {
-                System.out.println("ERROR: The size of the board must be positive and larger than 1.");
-                System.out.print("Please enter the size of the board again: ");
-                auxBoardSize = in.nextLine();
-            }
-            game.setSize(Integer.parseInt(auxBoardSize));
+            do {
+                try{
+                    game.setSize(Integer.parseInt(auxBoardSize));
+                    validInput = Integer.parseInt(auxBoardSize) <= 1;
+                }catch (NumberFormatException e){
+                    controller.printSoutText("ERROR: The size of the board must be positive and larger than 1.");
+                    controller.printSoutText("Please enter the size of the board again: ");
+                    auxBoardSize = controller.readLineScanner();
+                }
+
+            }while(!validInput);
         }
 
         // CONTROL DE INICELL
+        validInput = true;
+        controller.printSoutText("Please enter the number of initial cells: ");
+        String auxInitCells =  controller.readLineScanner();
 
-        System.out.print("Please enter the number of initial cells: ");
-        String auxInitCells = in.nextLine();
-
-        if(auxInitCells.isEmpty()){
+        if (auxInitCells.isEmpty()) {
             this.initCells = game.setInitCells(this.defaultInitCells);
-            System.out.println("Using the default number of initial cells: " + this.initCells);
-        }
-        else {
-            while (Integer.parseInt(auxInitCells) > Integer.parseInt(auxBoardSize) * Integer.parseInt(auxBoardSize)) {
-                System.out.println("ERROR: The number of initial cells must be less than the number of cells on the board");
-                System.out.print("Please enter the size of the board again: ");
-                auxInitCells = in.nextLine();
-            }
-            game.setInitCells(Integer.parseInt(auxInitCells));
+            controller.printSoutText("Using the default number of initial cells: " + this.initCells);
+        }else {
+            do {
+                validInput = (Integer.parseInt(auxInitCells) > Integer.parseInt(auxBoardSize) * Integer.parseInt(auxBoardSize));
+                try{
+                    game.setSize(Integer.parseInt(auxInitCells));
+
+                }catch (NumberFormatException e){
+                    validInput = false;
+                    controller.printSoutText("ERROR: The number of initial cells must be less than the number of cells on the board");
+                    controller.printSoutText("Please enter the size of the board again: ");
+                    auxBoardSize = controller.readLineScanner();
+                }
+
+            }while(!validInput);
         }
 
         // CONTROL DE SEED
-
-        System.out.print("Please enter the seed for the pseudo-random number generator: ");
-        String auxRand = in.nextLine();
-        if(auxRand.isEmpty()){
-            this.rand = game.setNewRandom(1000);
-            System.out.println("Using the default seed for the pseudo-random number generator: "+ this.rand);
+        validInput = true;
+        controller.printSoutText("Please enter the seed for the pseudo-random number generator: ");
+        String auxRand =  controller.readLineScanner();
+        try {
+            if (auxRand.isEmpty()) {
+                this.rand = game.setNewRandom(1000);
+                controller.printSoutText("Using the default seed for the pseudo-random number generator: " + this.rand);
+            } else game.setSeed(Long.parseLong(auxRand));
+        }catch (NumberFormatException e){
+            throw new NumberFormatException("The seed for the pseudo-random number generator must be a valid number. ");
         }
-        else game.setSeed(Long.parseLong(auxRand));
 
         switch(this.gameType){
             case ORIG: game.setCurrentRules(new Rules2048()); break;

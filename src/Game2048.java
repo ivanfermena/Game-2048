@@ -16,19 +16,23 @@ public class Game2048 {
     public static void main(String[]args){
         Scanner sc = new Scanner(System.in);
 
-        long seed;
-        if(args.length > 2){
-            //rand = new Random(Integer.parseInt(args[2]));
-            seed = Integer.parseInt(args[2]);
+       try {
+            long seed;
+            if (args.length > 2) {
+                //rand = new Random(Integer.parseInt(args[2]));
+                seed = Integer.parseInt(args[2]);
+            } else {
+                seed = new Random().nextInt(1000);
+                //rand = new Random(seed);
+            }
+
+            GameRules rules = new Rules2048();
+            Game game = new Game(Integer.parseInt(args[0]),Integer.parseInt(args[1]), seed, rules);
+            Controller ctr = new Controller(game, sc);
+            ctr.run();
+
+        }catch (NumberFormatException e){
+            System.out.println(e.getMessage());
         }
-        else
-        {
-            seed = new Random().nextInt(1000);
-            //rand = new Random(seed);
-        }
-        GameRules rules = new Rules2048();
-        Game game = new Game(Integer.parseInt(args[0]),Integer.parseInt(args[1]), seed, rules);
-        Controller ctr = new Controller(game, sc);
-        ctr.run();
     }
 }

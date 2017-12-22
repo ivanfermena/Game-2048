@@ -1,5 +1,7 @@
 package util;
 
+import exceptions.MoveException;
+
 /**
  * Autores: Alberto Pastor Moreno e Ivan Fernandez Mena - 2E
  *

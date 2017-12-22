@@ -6,6 +6,7 @@ package control.commands;
  */
 
 import control.Controller;
+import exceptions.MoveException;
 import logic.multigames.games.Game;
 
 public abstract class Command {
@@ -47,4 +48,4 @@ public abstract class Command {
      * @return String --> Retornamos dicho formato.
      */
     public String helpText(){return "-" + commandText + helpText;}
-    }
+}

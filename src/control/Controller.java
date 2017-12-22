@@ -9,6 +9,8 @@ package control;
 import control.commands.Command;
 import logic.multigames.games.Game;
 import util.CommandParser;
+
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Controller {
@@ -52,38 +54,44 @@ public class Controller {
      * la ejecuta invocando a algún método de la clase game. Comando help que imprime la ayuda del juego.
      */
     public void run(){
+
         if(this.doPrintGame)
             System.out.println(this.game);
-        while (!this.game.isEndGame())
-        {
-            iniTextUnknown();
-            setDoPrintAuxText(false);
-            System.out.print("Command >> ");
-            String userComand = this.in.nextLine().trim().toLowerCase();
-            String[] userCommands = userComand.split(" ");
-            Command finalCommand = CommandParser.parseCommand(userCommands, this);
+        while (!this.game.isEndGame()) {
 
-            if (finalCommand == null){
-                this.setDoPrintGame(false);
-            }
-            else {
-                finalCommand.execute(this.game, this);
-                if (this.game.isWonGame()) {
-                    this.setDoPrintAuxText(true);
-                    this.setAuxText("You won ! :)");
-                    this.game.setEndGame(true);
+            try{
+                iniTextUnknown();
+                setDoPrintAuxText(false);
+                System.out.print("Command >> ");
+                String userComand = this.in.nextLine().trim().toLowerCase();
+                String[] userCommands = userComand.split(" ");
+                Command finalCommand = CommandParser.parseCommand(userCommands, this);
+
+                if (finalCommand == null){
+                    this.setDoPrintGame(false);
                 }
-                else if(this.game.isLostGame()){
-                    this.setDoPrintAuxText(true);
-                    this.setAuxText("You lost ! :(");
-                    this.game.setEndGame(true);
+                else {
+                    finalCommand.execute(this.game, this);
+                    if (this.game.isWonGame()) {
+                        this.setDoPrintAuxText(true);
+                        this.setAuxText("You won ! :)");
+                        this.game.setEndGame(true);
+                    }
+                    else if(this.game.isLostGame()){
+                        this.setDoPrintAuxText(true);
+                        this.setAuxText("You lost ! :(");
+                        this.game.setEndGame(true);
+                    }
                 }
+                if(this.doPrintGame)
+                    System.out.println(this.game);
+                if(this.doPrintAuxText){
+                    System.out.println(this.auxText);
+                    this.setDoPrintAuxText(false);}
+
+            }catch (NumberFormatException e){
+                System.out.println(e.getMessage());
             }
-            if(this.doPrintGame)
-                System.out.println(this.game);
-            if(this.doPrintAuxText){
-                System.out.println(this.auxText);
-                this.setDoPrintAuxText(false);}
 
         }
 
@@ -95,6 +103,18 @@ public class Controller {
     public void iniTextUnknown(){
         this.setAuxText("Unknown command.  Use ’help’ to see the available commands.");
         this.setDoPrintAuxText(true);
+    }
+
+    /**
+     * Metodo que controla la entrada de texto por Scanner, solicita la linea entera.
+     * @return String --> Texto recogido por teclado.
+     */
+    public String readLineScanner(){
+        return this.in.nextLine();
+    }
+
+    public void printSoutText(String tx){
+        System.out.print(tx);
     }
 
     /**

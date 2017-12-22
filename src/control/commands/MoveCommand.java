@@ -6,6 +6,7 @@ package control.commands;
  */
 
 import control.Controller;
+import exceptions.MoveException;
 import logic.multigames.games.Game;
 import util.Direction;
 
@@ -57,7 +58,6 @@ public class MoveCommand extends Command {
             if (this.commandName.equals(commandWords[0]) && commandWords.length >= 2) {
                 // Parsear segunda palabra y meterla como direccion ( atributo de la clase move, crear nuevo objeto)
                 MoveCommand moveCommand = new MoveCommand();
-
                 moveCommand.dir = Direction.validDir(commandWords[1]);
 
                 if (moveCommand.dir == null){
