@@ -7,6 +7,9 @@ package control;
  */
 
 import control.commands.Command;
+import exceptions.CommandExecuteException;
+import exceptions.CommandParserException;
+import exceptions.GameOverException;
 import logic.multigames.games.Game;
 import util.CommandParser;
 
@@ -18,7 +21,6 @@ public class Controller {
     /** -Atributtes- */
     private Game game;
     private Scanner in;
-    private boolean doPrintGame;
     private boolean doPrintAuxText;
     private String auxText;
 
@@ -30,15 +32,11 @@ public class Controller {
     public Controller(Game game, Scanner in) {
         this.game = game;
         this.in = in;
-        this.doPrintGame = true;
         this.doPrintAuxText = false;
         this.auxText = "Unknown command.  Use ’help’ to see the available commands.";
     }
 
     /**Getters and Setters*/
-    public void setDoPrintGame(boolean doPrintGame) {
-        this.doPrintGame = doPrintGame;
-    }
     public void setDoPrintAuxText(boolean doPrintAuxText) {
         this.doPrintAuxText = doPrintAuxText;
     }
@@ -54,54 +52,34 @@ public class Controller {
      * la ejecuta invocando a algún método de la clase game. Comando help que imprime la ayuda del juego.
      */
     public void run(){
-
-        if(this.doPrintGame)
-            System.out.println(this.game);
+        System.out.println(this.game);
         while (!this.game.isEndGame()) {
-
             try{
                 iniTextUnknown();
                 setDoPrintAuxText(false);
                 System.out.print("Command >> ");
-                String userComand = this.in.nextLine().trim().toLowerCase();
-                String[] userCommands = userComand.split(" ");
+                String userCommand = this.in.nextLine().trim().toLowerCase();
+                String[] userCommands = userCommand.split(" ");
                 Command finalCommand = CommandParser.parseCommand(userCommands, this);
-
-                if (finalCommand == null){
-                    this.setDoPrintGame(false);
-                }
-                else {
-                    finalCommand.execute(this.game, this);
-                    if (this.game.isWonGame()) {
-                        this.setDoPrintAuxText(true);
-                        this.setAuxText("You won ! :)");
-                        this.game.setEndGame(true);
-                    }
-                    else if(this.game.isLostGame()){
-                        this.setDoPrintAuxText(true);
-                        this.setAuxText("You lost ! :(");
-                        this.game.setEndGame(true);
-                    }
-                }
-                if(this.doPrintGame)
+                if(finalCommand.execute(this.game, this))
                     System.out.println(this.game);
                 if(this.doPrintAuxText){
                     System.out.println(this.auxText);
                     this.setDoPrintAuxText(false);}
-
-            }catch (NumberFormatException e){
-                System.out.println(e.getMessage());
+            }catch (CommandParserException | CommandExecuteException | GameOverException e){
+                this.printSoutText(e.getMessage());
             }
-
+            finally {
+                // Cierre archivos etc
+            }
         }
-
     }
 
     /**
      * Metodo que inicia por defecto y activa el texto a mostrar si no existe el comando introducido.
      */
     public void iniTextUnknown(){
-        this.setAuxText("Unknown command.  Use ’help’ to see the available commands.");
+        this.setAuxText("Unknown command.  Use ’help’ to see the available commands.\n");
         this.setDoPrintAuxText(true);
     }
 
@@ -112,34 +90,7 @@ public class Controller {
     public String readLineScanner(){
         return this.in.nextLine();
     }
-
     public void printSoutText(String tx){
         System.out.print(tx);
     }
-
-    /**
-     * Controla la gestion de volver a iniciar o acabar la partida determinada.
-     */
-    /*private void gameOver() {   PENDIENTE DE BORRAR
-
-       System.out.println(this.game);
-       System.out.print("\nDo you want to play a new game?\t>>\t");
-       String userComand = this.in.nextLine();
-       String userFirst = userComand.split(" ")[0].trim().toLowerCase();
-
-       switch (userFirst){
-           case "yes":
-               System.out.println("\n\n\n\n\n\n\n\n\n\n");
-               this.game.reset();
-               this.run();
-               break;
-           case "no":
-               System.out.println("~ ByeBye ~");
-               break;
-           default:
-               System.out.println("Unknown command");
-               this.gameOver();
-       }
-
-   }*/
 }

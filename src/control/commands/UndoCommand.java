@@ -6,15 +6,20 @@ package control.commands;
  */
 
 import control.Controller;
+import exceptions.CommandExecuteException;
 import logic.multigames.games.Game;
+
+import java.util.EmptyStackException;
 
 public class UndoCommand extends NoParamsCommand {
 
+    private static final String CommandInfo = "undo";
+    private static final String HelpInfo = ": Undo the last command. (max: 20)";
     /**
      * Constructor de UndoCommand que dicta Commando a introducir y el texto de ayuda.
      */
     public UndoCommand() {
-        super("undo", ": Undo the last command. (max: 20)");
+        super(CommandInfo, HelpInfo);
     }
 
     /**
@@ -23,14 +28,13 @@ public class UndoCommand extends NoParamsCommand {
      * @param controller Controller --> Entorno al que se refiere o en donde se realiza la accion.
      */
     @Override
-    public void execute(Game game, Controller controller) {
-        if(game.getArrayGameState().isEmpty() || game.getArrayGameState().getSize() - 2 - game.getArrayGameState().getNumUndo() < 0){
-            controller.setAuxText("The undo command could not be completed.");
-            controller.setDoPrintAuxText(true);
-            controller.setDoPrintGame(false);
-        }else{
+    public boolean execute(Game game, Controller controller) throws CommandExecuteException{
+        try {
             game.undo();
-            controller.setDoPrintGame(true);
+            return true;
+        }
+        catch(EmptyStackException e){
+            throw new CommandExecuteException("The undo command could not be completed.\n");
         }
     }
 

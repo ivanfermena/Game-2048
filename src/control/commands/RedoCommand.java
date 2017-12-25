@@ -6,15 +6,20 @@ package control.commands;
  */
 
 import control.Controller;
+import exceptions.CommandExecuteException;
 import logic.multigames.games.Game;
+
+import java.util.EmptyStackException;
 
 public class RedoCommand extends NoParamsCommand{
 
+    private static final String CommandInfo = "redo";
+    private static final String HelpInfo = ": Redo the last undone command.";
     /**
      * Constructor de RedoCommand que dicta Commando a introducir y el texto de ayuda.
      */
     public RedoCommand() {
-        super("redo", ": Redo the last undone command.");
+        super(CommandInfo, HelpInfo);
     }
 
     /**
@@ -23,14 +28,13 @@ public class RedoCommand extends NoParamsCommand{
      * @param controller Controller --> Entorno al que se refiere o en donde se realiza la accion.
      */
     @Override
-    public void execute(Game game, Controller controller) {
-        if(game.getArrayGameState().isEmpty() || game.getArrayGameState().getNumUndo() == 0){
-            controller.setAuxText("The redo command could not be completed.");
-            controller.setDoPrintAuxText(true);
-            controller.setDoPrintGame(false);
-        }else{
+    public boolean execute(Game game, Controller controller) throws CommandExecuteException {
+        try {
             game.redo();
-            controller.setDoPrintGame(true);
+            return true;
+        }
+        catch(EmptyStackException e){
+            throw new CommandExecuteException("The redo command could not be completed.\n");
         }
     }
 

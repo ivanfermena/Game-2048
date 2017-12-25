@@ -10,11 +10,13 @@ import logic.multigames.games.Game;
 
 public class ResetCommand extends NoParamsCommand {
 
+    private static final String CommandInfo = "reset";
+    private static final String HelpInfo = ": Start a new game.";
     /**
      * Constructor de ResetCommand que dicta Commando a introducir y el texto de ayuda.
      */
     public ResetCommand() {
-        super("reset", ": Start a new game.");
+        super(CommandInfo, HelpInfo);
     }
 
     /**
@@ -23,10 +25,10 @@ public class ResetCommand extends NoParamsCommand {
      * @param controller Controller --> Entorno al que se refiere o en donde se realiza la accion.
      */
     @Override
-    public void execute(Game game, Controller controller) {
+    public boolean execute(Game game, Controller controller) {
         game.reset();
-        controller.setDoPrintGame(true);
         controller.setDoPrintAuxText(false);
+        return true;
     }
 
     /**

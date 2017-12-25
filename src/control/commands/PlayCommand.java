@@ -6,6 +6,7 @@ package control.commands;
  */
 
 import control.Controller;
+import exceptions.CommandParserException;
 import logic.multigames.games.Game;
 import logic.multigames.games.Rules2048;
 import logic.multigames.games.RulesFib;
@@ -19,14 +20,17 @@ public class PlayCommand extends Command {
     private GameType gameType;
     private int initCells;
     private long rand;
-    private final int defaultBoardSize = 4;
-    private final int defaultInitCells = 2;
+    private static final int defaultBoardSize = 4;
+    private static final int defaultInitCells = 2;
+    private static final String CommandInfo = "play";
+    private static final String HelpInfo = "<game>: Start a new game of one of the game types: original, fib, inverse.";
 
     /**
      * Constructor de PlayCommand que dicta Commando a introducir y el texto de ayuda.
      */
-    public PlayCommand() {
-        super("play", " <game>: Start a new game of one of the game types: original, fib, inverse.");
+    public PlayCommand(GameType gameType) {
+        super(CommandInfo, HelpInfo);
+        this.gameType = gameType;
     }
 
     /**
@@ -36,28 +40,17 @@ public class PlayCommand extends Command {
      * @return Command --> Devuelve el objeto Command tratado y si no es perteneciente a este commando return: null
      */
     @Override
-    public Command parse(String[] commandWords, Controller controller){
-        if (!this.commandName.equals(commandWords[0]) && commandWords.length == 1) {
-            if(!controller.isDoPrintAuxText()){
-                controller.iniTextUnknown();
-            }
+    public Command parse(String[] commandWords, Controller controller) throws CommandParserException{
+        if (!this.commandName.equals(commandWords[0])) {
             return null;
         }else {
-            if (this.commandName.equals(commandWords[0]) && commandWords.length >= 2) {
-                PlayCommand playCommand = new PlayCommand();
-                playCommand.gameType = GameType.validGT(commandWords[1]);
+            if (commandWords.length == 2) {
+                PlayCommand playCommand = new PlayCommand(GameType.validGT(commandWords[1]));
                 if (playCommand.gameType == null){
-                    controller.setDoPrintAuxText(true);
-                    controller.setAuxText("Unknown game type for play command. ( original(orig), fibonacci(fib) or inverse(inv))");
-                    playCommand = null;
-                }
-                return playCommand;
-            } else {
-                if(!controller.isDoPrintAuxText()) {
-                    controller.setAuxText("Play must be followed by a game type: original(orig), fibonacci(fib), inverse(inv)");
-                    controller.setDoPrintAuxText(true);
-                }
-                return null;
+                    throw new CommandParserException("Unknown game type for play command. ( original<orig>, fibonacci<fib> or inverse<inv> )\n");
+                } else return playCommand;
+            } else { // Se podria anadir diferencia caso tam = 1 y tam >2
+                throw new CommandParserException("Play must be followed only by a game type: original(orig), fibonacci(fib), inverse(inv)\n");
             }
         }
     }
@@ -67,7 +60,7 @@ public class PlayCommand extends Command {
      * @param game Game --> Juego al que le afecta la accion a realizar.
      * @param controller Controller --> Entorno al que se refiere o en donde se realiza la accion.
      */
-    public void execute(Game game, Controller controller) {
+    public boolean execute(Game game, Controller controller) {
 
         boolean validInput = true;
 
@@ -76,9 +69,9 @@ public class PlayCommand extends Command {
         String auxBoardSize = controller.readLineScanner();
 
         if(auxBoardSize.isEmpty()){
-            game.setSize(this.defaultBoardSize);
-            auxBoardSize = String.valueOf(this.defaultBoardSize);
-            controller.printSoutText("Using the default size of the board: " + this.defaultBoardSize);
+            game.setSize(defaultBoardSize);
+            auxBoardSize = String.valueOf(defaultBoardSize);
+            controller.printSoutText("Using the default size of the board: " + defaultBoardSize);
         }
         else {
             do {
@@ -100,7 +93,7 @@ public class PlayCommand extends Command {
         String auxInitCells =  controller.readLineScanner();
 
         if (auxInitCells.isEmpty()) {
-            this.initCells = game.setInitCells(this.defaultInitCells);
+            this.initCells = game.setInitCells(defaultInitCells);
             controller.printSoutText("Using the default number of initial cells: " + this.initCells);
         }else {
             do {
@@ -136,9 +129,9 @@ public class PlayCommand extends Command {
             case FIB: game.setCurrentRules(new RulesFib()); break;
             case INV: game.setCurrentRules(new RulesInverse()); break;
         }
-        game.reset();
         controller.setAuxText("Has cambiado el juego actual\n");
         controller.setDoPrintAuxText(true);
-        controller.setDoPrintGame(true);
+        game.reset();
+        return true;
     }
 }

@@ -24,8 +24,6 @@ public class ArrayGameState {
 
     /**Getters and Setters*/
     public int getSize() { return size; }
-    public void setSize(int size) { this.size = size; }
-    public static int getCAPACITY() { return CAPACITY; }
     public int getNumUndo() { return numUndo; }
     public void setNumUndo(int numUndo) { this.numUndo = numUndo; }
     public GameState[] getStates() {
@@ -37,17 +35,34 @@ public class ArrayGameState {
      * @param state
      */
     public void push(GameState state){
-        if(this.getSize() < ArrayGameState.getCAPACITY() ){
+        if(this.size < CAPACITY ){
             this.states[this.size] = state;
             this.size++;
-        } else if( this.getSize() == ArrayGameState.getCAPACITY()){
+        } else if( this.size == CAPACITY){
             for (int i = this.size - 2; i >= 0; i--) {
                 this.states[i] = this.states[i+1];
             }
             this.states[this.size-1] = state;
         }
     }
-    public boolean isEmpty(){
+    private boolean isEmpty(){
         return this.size == 0;
+    }
+    public boolean possibleUndo(){ return !(this.isEmpty() || this.size - 2 - this.numUndo < 0); }
+    public boolean possibleRedo(){ return !(this.isEmpty() || this.numUndo == 0); }
+    public void moveUpdate(GameState newCurrentState) {
+        this.size = (this.size - this.numUndo);
+        this.push(newCurrentState);
+        this.numUndo = 0;
+    }
+    public GameState undoUpdate(){
+        GameState prevGameState = this.states[this.size - 2 - this.numUndo];
+        this.numUndo += 1;
+        return prevGameState;
+    }
+    public GameState redoUpdate(){
+        GameState prevGameState = this.states[this.size - this.numUndo];
+        this.numUndo -= 1;
+        return prevGameState;
     }
 }

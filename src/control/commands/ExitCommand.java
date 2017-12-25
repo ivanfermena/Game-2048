@@ -10,11 +10,13 @@ import logic.multigames.games.Game;
 
 public class ExitCommand extends NoParamsCommand {
 
+    private static final String CommandInfo = "exit";
+    private static final String HelpInfo = ": Terminate the program.";
     /**
      * Constructor de ExitCommand que dicta Commando a introducir y el texto de ayuda.
      */
     public ExitCommand() {
-        super("exit", ": Terminate the program.");
+        super(CommandInfo, HelpInfo);
     }
 
     /**
@@ -22,12 +24,12 @@ public class ExitCommand extends NoParamsCommand {
      * @param game Game --> Juego al que le afecta la accion a realizar.
      * @param controller Controller --> Entorno al que se refiere o en donde se realiza la accion.
      */
-    public void execute(Game game, Controller controller)
+    public boolean execute(Game game, Controller controller)
     {
         controller.setAuxText("Bye bye !");
         controller.setDoPrintAuxText(true);
-        controller.setDoPrintGame(false);
         game.setEndGame(true);
+        return false;
     }
 
     /**

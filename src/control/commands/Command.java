@@ -6,7 +6,9 @@ package control.commands;
  */
 
 import control.Controller;
-import exceptions.MoveException;
+import exceptions.CommandExecuteException;
+import exceptions.CommandParserException;
+import exceptions.GameOverException;
 import logic.multigames.games.Game;
 
 public abstract class Command {
@@ -33,7 +35,7 @@ public abstract class Command {
      * @param game Game --> Juego al que le afecta la accion a realizar.
      * @param controller Controller --> Entorno al que se refiere o en donde se realiza la accion.
      */
-    public abstract void execute(Game game, Controller controller);
+    public abstract boolean execute(Game game, Controller controller) throws CommandExecuteException, GameOverException;
 
     /**
      * Metodo abstacto que controla el comandos metido y lo trata para ver si es determinado de ese comando.
@@ -41,7 +43,7 @@ public abstract class Command {
      * @param controller Controller --> Entorno al que se refiere o en donde se realiza la accion.
      * @return Command --> Retorno de clase para que comando ha sido correcto y si no return: null.
      */
-    public abstract Command parse(String[] commandWords, Controller controller);
+    public abstract Command parse(String[] commandWords, Controller controller) throws CommandParserException;
 
     /**
      * Metodo para controlar el formato de la ayuda.

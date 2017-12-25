@@ -6,7 +6,9 @@ package control.commands;
  */
 
 import control.Controller;
-import exceptions.MoveException;
+import exceptions.CommandExecuteException;
+import exceptions.CommandParserException;
+import exceptions.GameOverException;
 import logic.multigames.games.Game;
 import util.Direction;
 
@@ -14,13 +16,15 @@ public class MoveCommand extends Command {
 
     /** -Atributtes- */
     private Direction dir;
+    private static final String CommandInfo = "move";
+    private static final String HelpInfo = " <direction>: Execute a move in one of the directions: <up>, <down>, <left>, <right>.";
 
     /**
      * Constructor de MoveCommand que dicta Commando a introducir y el texto de ayuda.
      */
-    public MoveCommand() {
-        super("move", " <direction>: Execute a move in one of the directions: up, down, left, right.");
-        this.dir = null;
+    public MoveCommand(Direction dir) {
+        super(CommandInfo, HelpInfo);
+        this.dir = dir;
     }
 
     /**
@@ -29,17 +33,10 @@ public class MoveCommand extends Command {
      * @param controller Controller --> Entorno al que se refiere o en donde se realiza la accion.
      */
     @Override
-    public void execute(Game game, Controller controller) {
-            if(game.move(this.dir)) {
-                game.getArrayGameState().setSize(game.getArrayGameState().getSize() - game.getArrayGameState().getNumUndo());
-                game.getArrayGameState().push(game.getState() );
-                game.getArrayGameState().setNumUndo(0);
-                controller.setDoPrintGame(true);
-            }else{
-                controller.setDoPrintGame(false);
-                controller.setAuxText("No movement has been made.");
-                controller.setDoPrintAuxText(true);
-            }
+    public boolean execute(Game game, Controller controller) throws CommandExecuteException, GameOverException{
+            if (game.move(this.dir)) {
+                return true;
+            } else { throw new CommandExecuteException("No movement has been made."); }
     }
 
     /**
@@ -49,28 +46,18 @@ public class MoveCommand extends Command {
      * @return Command --> Devuelve el objeto Command tratado y si no es perteneciente a este commando return: null
      */
     @Override
-    public Command parse(String[] commandWords, Controller controller) {
-        if (!this.commandName.equals(commandWords[0]) && commandWords.length == 1) {
-            controller.setDoPrintAuxText(false);
-            controller.setAuxText("Unknown command.  Use ’help’ to see the available commands.");
+    public Command parse(String[] commandWords, Controller controller) throws CommandParserException {
+        if (!this.commandName.equals(commandWords[0])) {
             return null;
         }else{
-            if (this.commandName.equals(commandWords[0]) && commandWords.length >= 2) {
-                // Parsear segunda palabra y meterla como direccion ( atributo de la clase move, crear nuevo objeto)
-                MoveCommand moveCommand = new MoveCommand();
-                moveCommand.dir = Direction.validDir(commandWords[1]);
-
+            if (commandWords.length == 2) {
+                MoveCommand moveCommand = new MoveCommand(Direction.validDir(commandWords[1]));
                 if (moveCommand.dir == null){
-                    controller.setDoPrintAuxText(true);
-                    controller.setAuxText("Unknown direction for move command. (up, down, left or right)");
-                    moveCommand = null;
+                    throw new CommandParserException("Unknown command, you must set a valid direction(<right>, <left>, <up>, <down>)") ;
                 }
-
-                return moveCommand;
-            } else {
-                controller.setDoPrintAuxText(true);
-                controller.setAuxText("Move must be followed by a direction: up, down, left, right.");
-                return null;
+                else return moveCommand;
+            } else { // Se podria anadir el caso en el cual hay mas de 2 palabras
+                throw new CommandParserException("Move must be followed only by a direction: <up>, <down>, <left>, <right>.");
             }
         }
     }

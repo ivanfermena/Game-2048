@@ -12,11 +12,14 @@ import static util.CommandParser.commandHelp;
 
 public class HelpCommand extends NoParamsCommand {
 
+
+    private static final String CommandInfo = "help";
+    private static final String HelpInfo = ": Print this help message.";
     /**
      * Constructor de HelpCommand que dicta Commando a introducir y el texto de ayuda.
      */
     public HelpCommand() {
-        super("help", ": Print this help message.");
+        super(CommandInfo, HelpInfo);
     }
 
     /**
@@ -24,12 +27,12 @@ public class HelpCommand extends NoParamsCommand {
      * @param game Game --> Juego al que le afecta la accion a realizar.
      * @param controller Controller --> Entorno al que se refiere o en donde se realiza la accion.
      */
-    public void execute(Game game, Controller controller)
+    public boolean execute(Game game, Controller controller)
     {
         String helpText = commandHelp();
         controller.setAuxText(helpText);
         controller.setDoPrintAuxText(true);
-        controller.setDoPrintGame(false);
+        return false;
     }
 
     /**

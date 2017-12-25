@@ -8,25 +8,27 @@ package util;
 
 import control.Controller;
 import control.commands.*;
+import exceptions.CommandParserException;
 
 public class CommandParser {
-    private static Command[ ] availableCommands = { new HelpCommand(), new ResetCommand(), new ExitCommand(), new MoveCommand(), new UndoCommand(), new RedoCommand(), new PlayCommand() };
-    public static Command parseCommand(String[ ] commandWords, Controller controller)
+    private static Command[ ] availableCommands = { new HelpCommand(), new ResetCommand(), new ExitCommand(), new MoveCommand(null), new UndoCommand(), new RedoCommand(), new PlayCommand(null) };
+    public static Command parseCommand(String[ ] commandWords, Controller controller) throws CommandParserException
     {
         Command command = null;
         int i = 0;
-        while( i < availableCommands.length && command == null) // Revisar posible bucle erroneo
+        while( i < availableCommands.length && command == null)
         {
             command = availableCommands[i].parse(commandWords,controller);
             i++;
         }
-        return command;
+        if(command == null) throw new CommandParserException("Unknown command.  Use ’help’ to see the available commands.\n");
+        else return command;
     }
     public static String commandHelp()
     {
         String helpText = "\nThe available commands are:\n";
         for (int i = 0; i < availableCommands.length; i++) {
-            helpText += "\t" + availableCommands[i].helpText() + "\n"; // Revisar aviso de concatenacion
+            helpText += "\t" + availableCommands[i].helpText() + "\n";
         }
         return helpText;
     }

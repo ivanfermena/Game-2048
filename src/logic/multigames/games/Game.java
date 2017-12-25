@@ -6,8 +6,11 @@ package logic.multigames.games;
  * Funcion: Representar el estado de una partida: Inicio de partida, movimientos, scores, gestionar el comportamiento aleatorio del juego...)
  */
 
+import java.util.EmptyStackException;
 import java.util.Random;
 
+import exceptions.CommandExecuteException;
+import exceptions.GameOverException;
 import logic.ArrayGameState;
 import logic.Board;
 import logic.GameState;
@@ -23,8 +26,6 @@ public class Game {
     private Random myRandom;
     private int best, score;
     private boolean endGame;
-    private boolean lostGame;
-    private boolean wonGame;
     private ArrayGameState arrayGameState;
     private GameRules currentRules;
     private long seed;
@@ -41,8 +42,6 @@ public class Game {
         this.best = 0;
         this.score = 0;
         this.endGame = false;
-        this.wonGame = false;
-        this.lostGame = false;
         this.arrayGameState = new ArrayGameState();
         this.reset();
     }
@@ -52,29 +51,31 @@ public class Game {
     public boolean isEndGame() {
         return endGame;
     }
-    public boolean isLostGame(){return lostGame;}
     public void setEndGame(boolean endGame) {
         this.endGame = endGame;
     }
-    public boolean isWonGame() { return wonGame; }
     public void setCurrentRules(GameRules currentRules) { this.currentRules = currentRules; }
 
     /**
      * Método que ejecuta un movimiento en la dirección dir sobre el tablero, actualiza marcador Score y el valor Best
      * @param dir -> Direccion del movimiento.
      */
-    public boolean move(Direction dir){
+    public boolean move(Direction dir) throws GameOverException{
         MoveResults results = this.board.executeMove(dir, this.currentRules);
         this.score += results.getPoints();
         this.best = this.currentRules.getWinValue(this.board);
         if(results.isMoved())
         {
-                this.currentRules.addNewCell(this.board, this.myRandom);
-                this.endGame  = this.lostGame = this.currentRules.lose(this.board);
-                this.endGame = this.wonGame = this.currentRules.win(this.board);
-                return true;
-        }
-        return false;
+            this.currentRules.addNewCell(this.board, this.myRandom); // Añade una nueva celda
+            this.arrayGameState.moveUpdate(this.getState()); // Actualiza el array de estados dado el movimiento realizado
+            if(this.currentRules.lose(this.board)){
+                this.setEndGame(true);
+                throw new GameOverException("You lost ! :(");
+            } else if(this.currentRules.win(this.board)) {
+                this.setEndGame(true);
+                throw new GameOverException("You won ! :)");
+            } else return true;
+        } else return false;
     }
 
     /**
@@ -101,26 +102,30 @@ public class Game {
     /**
      * Metodo que trata la realizacion del comando undo de los estados de juego.
      */
-    public void undo(){
-        GameState prevGameState = this.arrayGameState.getStates()[this.arrayGameState.getSize() - 2 - this.arrayGameState.getNumUndo()]; // Problema, ya que en el enunciado expone la utilidad de pop (aparentemente inutil) y dice que no hacen falta mas metodos
-        this.setState(prevGameState);
-        this.arrayGameState.setNumUndo(this.arrayGameState.getNumUndo() + 1);
+    public void undo() throws EmptyStackException{
+        if(!this.arrayGameState.possibleUndo()){
+            throw new EmptyStackException();
+        }else{
+            this.setState(this.arrayGameState.undoUpdate());
+        }
     }
 
     /**
      *  Metodo que trata la realizacion del comando redo de los estados de juego.
      */
-    public void redo(){
-        GameState prevGameState = this.arrayGameState.getStates()[this.arrayGameState.getSize() - this.arrayGameState.getNumUndo()]; // Problema, ya que en el enunciado expone la utilidad de pop (aparentemente inutil) y dice que no hacen falta mas metodos
-        this.setState(prevGameState);
-        this.arrayGameState.setNumUndo(this.arrayGameState.getNumUndo() - 1);
+    public void redo() throws EmptyStackException{
+        if(!this.arrayGameState.possibleRedo()){
+            throw new EmptyStackException();
+        }else{
+            this.setState(this.arrayGameState.redoUpdate());
+        }
     }
 
     /**Getters and Setters*/
-    public GameState getState(){
+    private GameState getState(){
         return new GameState(this.score, this.board.getState() );
     }
-    public void setState(GameState aState){
+    private void setState(GameState aState){
         this.board.setState(aState.getBoardState());
         this.score = aState.getScore();
     }
