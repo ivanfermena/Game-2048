@@ -6,6 +6,9 @@ import util.Direction;
 import util.MyStringUtils;
 import util.Position;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+
 /**
  * Autores: Alberto Pastor Moreno e Ivan Fernandez Mena - 2E
  *
@@ -250,6 +253,31 @@ public class Board {
         }
         return lowestValue;
     }
+
+    private String parseGetState(int[][] state){
+        String vectorStr = "";
+        for(int i = 0; i < state.length; i++){
+            for(int j = 0; j < state.length; j++){
+                vectorStr += state[i][j] + "\t";
+            }
+            vectorStr += "\r\n";
+        }
+        vectorStr += "\r\n";
+        return vectorStr;
+    }
+
+    private String insertDateSave(int initCells, int size){
+        return initCells + "\t" + size + "\t";
+    }
+
+    public void store(BufferedWriter bufInput, int initCells, int size) throws IOException{
+        String strSaveGame = "This file stores a saved 2048 game\r\n\r\n";
+        strSaveGame += parseGetState(getState());
+        strSaveGame += insertDateSave(initCells, size);
+        bufInput.write(strSaveGame);
+        bufInput.close();
+    }
+
 }
 
 

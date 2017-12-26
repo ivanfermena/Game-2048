@@ -1,5 +1,9 @@
 package util;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 /**
  * Autores: Alberto Pastor Moreno e Ivan Fernandez Mena - 2E
  *
@@ -48,6 +52,35 @@ public class MyStringUtils {
         float start = mid - (len / 2);
         float end = start + len;
         return out.substring((int) start, (int) end);
+    }
+
+    public static boolean validFileName(String ﬁlename) {
+        File ﬁle = new File(ﬁlename);
+        if (ﬁle.exists()) {
+            return canWriteLocal(ﬁle);
+        } else {
+            try {
+                ﬁle.createNewFile();
+                ﬁle.delete();
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+    }
+
+    private static boolean canWriteLocal(File ﬁle) {
+        // works OK on Linux but not on Windows (apparently!)
+        if (!ﬁle.canWrite()) {
+            return false;
+        }
+        // works on Windows
+        try {
+            new FileOutputStream(ﬁle, true).close();
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
 
     /** -Getters and Setters- */

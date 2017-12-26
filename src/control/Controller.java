@@ -23,6 +23,7 @@ public class Controller {
     private Scanner in;
     private boolean doPrintAuxText;
     private String auxText;
+    private boolean boolOverwrite;
 
     /**
      * Constructor de Controller
@@ -34,6 +35,7 @@ public class Controller {
         this.in = in;
         this.doPrintAuxText = false;
         this.auxText = "Unknown command.  Use ’help’ to see the available commands.";
+        this.boolOverwrite = true;
     }
 
     /**Getters and Setters*/
@@ -43,6 +45,16 @@ public class Controller {
     public void setAuxText(String auxText) {
         this.auxText = auxText;
     }
+
+    // ROMPE EL ENCAMPSULAMIENTO???
+
+    public boolean isBoolOverwrite() {
+        return boolOverwrite;
+    }
+    public void setBoolOverwrite(boolean boolOverwrite) {
+        this.boolOverwrite = boolOverwrite;
+    }
+
     public boolean isDoPrintAuxText() {
         return doPrintAuxText;
     }
