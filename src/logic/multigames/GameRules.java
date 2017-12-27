@@ -7,7 +7,11 @@ package logic.multigames;
 
 import logic.Board;
 import logic.Cell;
+import logic.multigames.games.Rules2048;
+import logic.multigames.games.RulesFib;
+import logic.multigames.games.RulesInverse;
 import util.ArrayAsList;
+import util.GameType;
 import util.Position;
 
 import java.util.Random;
@@ -90,5 +94,13 @@ public interface GameRules {
             addNewCellAt(board, position, rand);
         }
     }
-
+    static GameRules validGR(GameType gt){ // Cambiar si se anade juego nuevo(gametype nuevo)
+        switch(gt){
+            case ORIG: return new Rules2048();
+            case FIB: return new RulesFib();
+            case INV: return new RulesInverse();
+            default: return null;
+        }
+    }
+    String RulesName();
 }

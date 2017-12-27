@@ -35,6 +35,8 @@ public class Board {
         }
     }
 
+    public int get_boardSize() { return _boardSize; }
+
     /**
      * Método usado para modificar el valor de la baldosa de la posición pos con el valor value
      * @param pos -> Posicion a modificar.
@@ -128,7 +130,7 @@ public class Board {
      */
     @Override
     public String toString(){
-        String viewBoard = " ";
+        String viewBoard = "\n ";
         MyStringUtils myStr = new MyStringUtils(this._boardSize);
 
         viewBoard += MyStringUtils.repeat(myStr.gethDelimeter(),this._boardSize*10 - 1 );
@@ -269,43 +271,25 @@ public class Board {
         return vectorStr;
     }
 
-    private String insertDateSave(int initCells, int size){
-        return initCells + "\t" + size + "\t";
-    }
 
-    public void store(BufferedWriter bufInput, int initCells, int size) throws IOException{
-        String strSaveGame = "This file stores a saved 2048 game\r\n";
-        strSaveGame += parseGetState(getState());
-        strSaveGame += insertDateSave(initCells, size);
-        bufInput.write(strSaveGame);
-        bufInput.close();
+    public void store(BufferedWriter bufInput) throws IOException{
+        bufInput.write(parseGetState(getState()));
     }
 
     public void load(BufferedReader bufInput) throws IOException, CommandExecuteException{
+        if (!bufInput.readLine().equals("This file stores a saved 2048 game")) throw new CommandExecuteException("Invalid filename: The file does not use a specific structure.\n");
+        bufInput.readLine(); // Linea de blancos
 
-        int[][] newBoard = null;
-
-        if (!bufInput.readLine().equals("This file stores a saved 2048 game"))
-            throw new CommandExecuteException("Invalid filename: The file not use sprecific structure.\n");
-
-        bufInput.readLine();
-
-        String[] auxBoardStr = bufInput.readLine().split("\t");
-
-        newBoard = new int[auxBoardStr.length][auxBoardStr.length];
-
-        for (int i = 0; i < auxBoardStr.length; i++) {
-            for (int j = 0; j < auxBoardStr.length; j++) {
-                newBoard[i][j] = Integer.parseInt(auxBoardStr[j]);
+        String[] auxReadStr = bufInput.readLine().split("\t");
+        // Cambia el Board actual por completo con uno nuevo
+        this._board  = new Cell[auxReadStr.length][auxReadStr.length];
+        this._boardSize = auxReadStr.length;
+        for (int i = 0; i < this._boardSize; i++) {
+            for (int j = 0; j < this._boardSize; j++) {
+                this._board[i][j] = new Cell(Integer.parseInt(auxReadStr[j]) );
             }
-            auxBoardStr = bufInput.readLine().split("\t");
+            auxReadStr = bufInput.readLine().split("\t");
         }
-
-        /**REMIMENCIONAR BIEN EL TAMANIO*/
-        this._boardSize = newBoard.length;
-
-        //new Board(newBoard.length);
-        setState(newBoard);
     }
 }
 

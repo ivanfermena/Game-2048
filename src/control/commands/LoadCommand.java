@@ -3,9 +3,7 @@ package control.commands;
 import control.Controller;
 import exceptions.CommandExecuteException;
 import exceptions.CommandParserException;
-import exceptions.GameOverException;
 import logic.multigames.games.Game;
-import util.GameType;
 import util.MyStringUtils;
 
 import java.io.*;
@@ -31,39 +29,31 @@ public class LoadCommand extends Command {
         if (!this.commandName.equals(commandWords[0])) {
             return null;
         }else {
-            if(commandWords.length == 1)
-                 throw new CommandParserException("Load must be followed by a filename.\n");
+            if(commandWords.length == 1) throw new CommandParserException("Load command must be followed by a filename.\n");
             else if (commandWords.length==2) {
                 this.inputFile = new File(commandWords[1]);
-                LoadCommand loadCommand = null;
-
-                if (!inputFile.exists())
-                    throw new CommandParserException("File not found.\n");
-                else if (!MyStringUtils.canReaderLocal(inputFile))
-                    throw new CommandParserException("File with restricted permissions.\n");
-                else
-                    loadCommand = new LoadCommand(inputFile);
-                return loadCommand;
+                if (!inputFile.exists()) throw new CommandParserException("File not found.\n");
+                else if (!MyStringUtils.canReaderLocal(inputFile)) throw new CommandParserException("File with restricted permissions.\n");
+                else return new LoadCommand(inputFile);
             }
-            else throw new CommandParserException("Invalid filename: the filename contains spaces.\n");
+            else throw new CommandParserException("Invalid Command: the filename contains spaces.\n");
         }
-
     }
 
     @Override
-    public boolean execute(Game game, Controller controller) throws CommandExecuteException, GameOverException, CommandExecuteException {
-
+    public boolean execute(Game game, Controller controller) throws CommandExecuteException {
         try(FileReader input = new FileReader(this.inputFile);
             BufferedReader bufInput = new BufferedReader(input)){ // Habria que hacerlo resource pero habria que ver como controlar que sobreescriba bien
+            controller.printSoutText("Game successfully loaded from file, 2048. " + game.load(bufInput) +"\n");
 
-            game.load(bufInput);
-
-        }catch ( FileNotFoundException e){
-            throw new CommandExecuteException("The redo command could not be completed.\n");
-        } catch (IOException e) {
-            e.printStackTrace();
+            bufInput.close();
+            return true;
+        } catch (IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException e) {
+            throw new CommandExecuteException("The file does not contain a saved game with a valid format.\n");
         }
-        return false;
+        finally {
+                // bufInput.close(); // Deberia cerrar en todos los casos
+        }
     }
 
 }

@@ -10,7 +10,7 @@ public class GameState {
 
     /**Atributtes */
     private int score;
-    private int highest;
+    private int best;
     private int[][] boardState;
 
     /**
@@ -18,9 +18,10 @@ public class GameState {
      * @param score int --> Almacena el estado del score del juego
      * @param boardState int[][] --> Almacena el estado actual del board
      */
-    public GameState(int score, int[][] boardState) {
+    public GameState(int score, int[][] boardState, int best) {
         this.score = score;
         this.boardState = boardState;
+        this.best = best;
     }
 
     /**Getters*/
@@ -30,4 +31,5 @@ public class GameState {
     public int[][] getBoardState() {
         return boardState;
     }
+    public int getBest() { return best;}
 }

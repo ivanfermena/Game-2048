@@ -24,11 +24,6 @@ public class ArrayGameState {
 
     /**Getters and Setters*/
     public int getSize() { return size; }
-    public int getNumUndo() { return numUndo; }
-    public void setNumUndo(int numUndo) { this.numUndo = numUndo; }
-    public GameState[] getStates() {
-        return states;
-    }
 
     /**
      * Metodo que trata la inserccion y el juego de indices dentro de los estados de juegos guardados.

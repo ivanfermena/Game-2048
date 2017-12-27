@@ -64,7 +64,7 @@ public class Controller {
      * la ejecuta invocando a algún método de la clase game. Comando help que imprime la ayuda del juego.
      */
     public void run(){
-        System.out.println(this.game);
+        this.printGame();
         while (!this.game.isEndGame()) {
             try{
                 iniTextUnknown();
@@ -74,15 +74,16 @@ public class Controller {
                 String[] userCommands = userCommand.split(" ");
                 Command finalCommand = CommandParser.parseCommand(userCommands, this);
                 if(finalCommand.execute(this.game, this))
-                    System.out.println(this.game);
+                    this.printGame();
                 if(this.doPrintAuxText){
                     System.out.println(this.auxText);
                     this.setDoPrintAuxText(false);}
-            }catch (CommandParserException | CommandExecuteException | GameOverException e){
+            }catch (CommandParserException | CommandExecuteException  e){
                 this.printSoutText(e.getMessage());
             }
-            finally {
-                // Cierre archivos etc
+            catch ( GameOverException goe){
+                this.printGame();
+                this.printSoutText(goe.getMessage());
             }
         }
     }
@@ -105,4 +106,5 @@ public class Controller {
     public void printSoutText(String tx){
         System.out.print(tx);
     }
+    private void printGame(){ System.out.println(this.game);}
 }

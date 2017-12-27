@@ -15,7 +15,6 @@ import java.util.Random;
 public class Rules2048 implements GameRules {
 
     private final int conditionWin = 2048;
-
     /**
      * @param board Board --> Tablero con el estado actual del juego
      * @param pos Position --> Posicion aleatoria a la que se quiere insertar el nuevo numero
@@ -65,4 +64,8 @@ public class Rules2048 implements GameRules {
         return getWinValue(board) == conditionWin;
     }
 
+    @Override
+    public String RulesName() {
+        return "orig";
+    }
 }

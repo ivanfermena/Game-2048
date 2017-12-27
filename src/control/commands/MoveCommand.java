@@ -36,7 +36,7 @@ public class MoveCommand extends Command {
     public boolean execute(Game game, Controller controller) throws CommandExecuteException, GameOverException{
             if (game.move(this.dir)) {
                 return true;
-            } else { throw new CommandExecuteException("No movement has been made."); }
+            } else { throw new CommandExecuteException("No movement has been made.\n"); }
     }
 
     /**
@@ -53,11 +53,11 @@ public class MoveCommand extends Command {
             if (commandWords.length == 2) {
                 MoveCommand moveCommand = new MoveCommand(Direction.validDir(commandWords[1]));
                 if (moveCommand.dir == null){
-                    throw new CommandParserException("Unknown command, you must set a valid direction(<right>, <left>, <up>, <down>)") ;
+                    throw new CommandParserException("Unknown command, you must set a valid direction(<right>, <left>, <up>, <down>)\n") ;
                 }
                 else return moveCommand;
             } else { // Se podria anadir el caso en el cual hay mas de 2 palabras
-                throw new CommandParserException("Move must be followed only by a direction: <up>, <down>, <left>, <right>.");
+                throw new CommandParserException("Move must be followed only by a direction: <up>, <down>, <left>, <right>.\n");
             }
         }
     }

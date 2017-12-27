@@ -7,6 +7,7 @@ package control.commands;
 
 import control.Controller;
 import exceptions.CommandParserException;
+import logic.multigames.GameRules;
 import logic.multigames.games.Game;
 import logic.multigames.games.Rules2048;
 import logic.multigames.games.RulesFib;
@@ -65,13 +66,13 @@ public class PlayCommand extends Command {
         boolean validInput = true;
 
         // CONTROL DE SIZE
-        controller.printSoutText("Please enter the size of the board: ");
+        controller.printSoutText("\nPlease enter the size of the board: ");
         String auxBoardSize = controller.readLineScanner();
 
         if(auxBoardSize.isEmpty()){
             game.setSize(defaultBoardSize);
             auxBoardSize = String.valueOf(defaultBoardSize);
-            controller.printSoutText("Using the default size of the board: " + defaultBoardSize);
+            controller.printSoutText("Using the default size of the board: " + defaultBoardSize + "\n");
         }
         else {
             do {
@@ -89,12 +90,12 @@ public class PlayCommand extends Command {
 
         // CONTROL DE INICELL
         validInput = true;
-        controller.printSoutText("Please enter the number of initial cells: ");
+        controller.printSoutText("\nPlease enter the number of initial cells: ");
         String auxInitCells =  controller.readLineScanner();
 
         if (auxInitCells.isEmpty()) {
             this.initCells = game.setInitCells(defaultInitCells);
-            controller.printSoutText("Using the default number of initial cells: " + this.initCells);
+            controller.printSoutText("Using the default number of initial cells: " + defaultInitCells + "\n");
         }else {
             do {
                 validInput = (Integer.parseInt(auxInitCells) > Integer.parseInt(auxBoardSize) * Integer.parseInt(auxBoardSize));
@@ -113,22 +114,18 @@ public class PlayCommand extends Command {
 
         // CONTROL DE SEED
         validInput = true;
-        controller.printSoutText("Please enter the seed for the pseudo-random number generator: ");
+        controller.printSoutText("\nPlease enter the seed for the pseudo-random number generator: ");
         String auxRand =  controller.readLineScanner();
         try {
             if (auxRand.isEmpty()) {
                 this.rand = game.setNewRandom(1000);
-                controller.printSoutText("Using the default seed for the pseudo-random number generator: " + this.rand);
+                controller.printSoutText("Using the default seed for the pseudo-random number generator: " + this.rand + "\n");
             } else game.setSeed(Long.parseLong(auxRand));
         }catch (NumberFormatException e){
             throw new NumberFormatException("The seed for the pseudo-random number generator must be a valid number. ");
         }
 
-        switch(this.gameType){
-            case ORIG: game.setCurrentRules(new Rules2048()); break;
-            case FIB: game.setCurrentRules(new RulesFib()); break;
-            case INV: game.setCurrentRules(new RulesInverse()); break;
-        }
+        game.setCurrentRules(GameRules.validGR(this.gameType));
         controller.setAuxText("Has cambiado el juego actual\n");
         controller.setDoPrintAuxText(true);
         game.reset();

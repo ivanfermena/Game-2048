@@ -127,11 +127,12 @@ public class Game {
 
     /**Getters and Setters*/
     private GameState getState(){
-        return new GameState(this.score, this.board.getState() );
+        return new GameState(this.score, this.board.getState(), this.best );
     }
     private void setState(GameState aState){
         this.board.setState(aState.getBoardState());
         this.score = aState.getScore();
+        this.best = aState.getBest();
     }
     public void setSeed(long seed) {
         this.seed = seed;
@@ -148,14 +149,27 @@ public class Game {
     public int setInitCells(int initCells) {
         return this.initCells = initCells;
     }
-
+    private String parseGameInfo(){
+        return this.initCells + "\t" + this.score + "\t" + this.currentRules.RulesName();
+    }
     public void store(BufferedWriter bufInput) throws IOException{
-        this.board.store(bufInput, this.initCells, this.size);
+        bufInput.write("This file stores a saved 2048 game\r\n\n");
+        this.board.store(bufInput); // Guarda en el bufInput el board
+        bufInput.write(this.parseGameInfo());
     }
 
-    public void load(BufferedReader bufInput) throws IOException, CommandExecuteException{
+    public GameType load(BufferedReader bufInput) throws CommandExecuteException, IOException{
         this.board.load(bufInput);
+        this.size = this.board.get_boardSize();
         String[] infoGame = bufInput.readLine().split("\t");
+        this.initCells = Integer.parseInt(infoGame[0]);
+        this.score = Integer.parseInt(infoGame[1]);
+        this.setCurrentRules(GameRules.validGR(GameType.validGT(infoGame[2])));
+        if(this.currentRules == null) throw new CommandExecuteException("The file does not contain a saved game with a valid format.\n");
+        else {
+            this.best = this.currentRules.getWinValue(this.board);
+            return GameType.validGT(infoGame[2]);
+        }
     }
 
 }
