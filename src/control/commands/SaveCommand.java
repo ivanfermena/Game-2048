@@ -46,10 +46,15 @@ public class SaveCommand extends Command{
     @Override
     public boolean execute(Game game, Controller controller) throws CommandExecuteException, GameOverException {
 
-        try(FileWriter input = new FileWriter(inputFile, controller.isBoolOverwrite());
-            BufferedWriter bufInput = new BufferedWriter(input)){ // Habria que hacerlo resource pero entra como null el inputFile cuando no es asi
+        try{ // Habria que hacerlo resource pero habria que ver como controlar que sobreescriba bien
 
+            FileWriter input = null;
+            if (controller.isBoolOverwrite()) input = new FileWriter(inputFile, controller.isBoolOverwrite());
+            else input = new FileWriter(inputFile);
+
+            BufferedWriter bufInput = new BufferedWriter(input);
             game.store(bufInput);
+            controller.printSoutText("Game successfully saved to file; use load command to reload it.\n");
         }catch (IOException e){
             throw new CommandExecuteException("The redo command could not be completed.\n");
         }

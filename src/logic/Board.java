@@ -1,11 +1,14 @@
 package logic;
 
+import exceptions.CommandExecuteException;
 import logic.multigames.GameRules;
+import logic.multigames.games.Game;
 import util.ArrayAsList;
 import util.Direction;
 import util.MyStringUtils;
 import util.Position;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
@@ -271,13 +274,39 @@ public class Board {
     }
 
     public void store(BufferedWriter bufInput, int initCells, int size) throws IOException{
-        String strSaveGame = "This file stores a saved 2048 game\r\n\r\n";
+        String strSaveGame = "This file stores a saved 2048 game\r\n";
         strSaveGame += parseGetState(getState());
         strSaveGame += insertDateSave(initCells, size);
         bufInput.write(strSaveGame);
         bufInput.close();
     }
 
+    public void load(BufferedReader bufInput) throws IOException, CommandExecuteException{
+
+        int[][] newBoard = null;
+
+        if (!bufInput.readLine().equals("This file stores a saved 2048 game"))
+            throw new CommandExecuteException("Invalid filename: The file not use sprecific structure.\n");
+
+        bufInput.readLine();
+
+        String[] auxBoardStr = bufInput.readLine().split("\t");
+
+        newBoard = new int[auxBoardStr.length][auxBoardStr.length];
+
+        for (int i = 0; i < auxBoardStr.length; i++) {
+            for (int j = 0; j < auxBoardStr.length; j++) {
+                newBoard[i][j] = Integer.parseInt(auxBoardStr[j]);
+            }
+            auxBoardStr = bufInput.readLine().split("\t");
+        }
+
+        /**REMIMENCIONAR BIEN EL TAMANIO*/
+        this._boardSize = newBoard.length;
+
+        //new Board(newBoard.length);
+        setState(newBoard);
+    }
 }
 
 

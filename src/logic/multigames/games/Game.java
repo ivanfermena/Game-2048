@@ -7,6 +7,7 @@ package logic.multigames.games;
  */
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.EmptyStackException;
@@ -150,6 +151,11 @@ public class Game {
 
     public void store(BufferedWriter bufInput) throws IOException{
         this.board.store(bufInput, this.initCells, this.size);
+    }
+
+    public void load(BufferedReader bufInput) throws IOException, CommandExecuteException{
+        this.board.load(bufInput);
+        String[] infoGame = bufInput.readLine().split("\t");
     }
 
 }

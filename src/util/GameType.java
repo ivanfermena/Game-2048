@@ -69,10 +69,8 @@ public enum GameType
                         controller.printSoutText("Please enter another filename: ");
                         newFilename = controller.readLineScanner();
                         controller.setBoolOverwrite(true);
-                        if (!MyStringUtils.validFileName(newFilename))
-                            throw new CommandParserException("Invalid filename: the filename contains invalid characters.");
+                        newFilename = GameType.conﬁrmFileNameStringForWrite(newFilename, controller);
                         break;
-
                     default:
                         controller.printSoutText("Please answer ’Y’ or ’N’\n");
                 }

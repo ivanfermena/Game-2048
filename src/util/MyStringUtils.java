@@ -1,6 +1,7 @@
 package util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -54,14 +55,14 @@ public class MyStringUtils {
         return out.substring((int) start, (int) end);
     }
 
-    public static boolean validFileName(String ﬁlename) {
-        File ﬁle = new File(ﬁlename);
-        if (ﬁle.exists()) {
-            return canWriteLocal(ﬁle);
+    public static boolean validFileName(String filename) {
+        File file = new File(filename);
+        if (file.exists()) {
+            return canWriteLocal(file);
         } else {
             try {
-                ﬁle.createNewFile();
-                ﬁle.delete();
+                file.createNewFile();
+                file.delete();
                 return true;
             } catch (Exception e) {
                 return false;
@@ -77,6 +78,20 @@ public class MyStringUtils {
         // works on Windows
         try {
             new FileOutputStream(ﬁle, true).close();
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean canReaderLocal(File ﬁle) {
+        // works OK on Linux but not on Windows (apparently!)
+        if (!ﬁle.canRead()) {
+            return false;
+        }
+        // works on Windows
+        try {
+            new FileInputStream(ﬁle).close();
         } catch (IOException e) {
             return false;
         }
