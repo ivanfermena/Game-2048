@@ -6,7 +6,6 @@ package logic.multigames.games;
  * Funcion: Representar el estado de una partida: Inicio de partida, movimientos, scores, gestionar el comportamiento aleatorio del juego...)
  */
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;

@@ -55,10 +55,6 @@ public class Controller {
         this.boolOverwrite = boolOverwrite;
     }
 
-    public boolean isDoPrintAuxText() {
-        return doPrintAuxText;
-    }
-
     /**
      * Metodo que controla  que la partida no esté finalizada, solicita una orden al usuario (move, reset, exit) y
      * la ejecuta invocando a algún método de la clase game. Comando help que imprime la ayuda del juego.

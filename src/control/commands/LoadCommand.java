@@ -51,9 +51,6 @@ public class LoadCommand extends Command {
         } catch (IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException e) {
             throw new CommandExecuteException("The file does not contain a saved game with a valid format.\n");
         }
-        finally {
-                // bufInput.close(); // Deberia cerrar en todos los casos
-        }
     }
 
 }

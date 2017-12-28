@@ -43,21 +43,19 @@ public class SaveCommand extends Command{
     }
 
     @Override
-    public boolean execute(Game game, Controller controller) throws CommandExecuteException, GameOverException {
-
-        try{ // Habria que hacerlo resource pero habria que ver como controlar que sobreescriba bien
+    public boolean execute(Game game, Controller controller) throws CommandExecuteException {
+        try{
             FileWriter input;
             if (controller.isBoolOverwrite()) input = new FileWriter(inputFile, controller.isBoolOverwrite());
             else input = new FileWriter(inputFile);
-            BufferedWriter bufInput = new BufferedWriter(input);
-            game.store(bufInput);
-            bufInput.close();
-            controller.printSoutText("Game successfully saved to file; use load command to reload it.\n");
-        }catch (IOException e){
+            try(BufferedWriter bufInput = new BufferedWriter(input)){
+                game.store(bufInput);
+                controller.printSoutText("Game successfully saved to file; use load command to reload it.\n");
+            }catch (IOException  e){
+                throw new CommandExecuteException("The save command could not be completed because of a file fail.\n");
+            }
+        } catch(IOException | NullPointerException ioe){
             throw new CommandExecuteException("The save command could not be completed because of a file fail.\n");
-        }
-        finally {
-            //bufInput.close(); // Debe cerrar el archivo en todos los casos
         }
         return false;
     }
