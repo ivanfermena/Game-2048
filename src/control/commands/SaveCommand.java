@@ -9,7 +9,6 @@ import util.GameType;
 
 import java.io.*;
 
-
 public class SaveCommand extends Command{
 
     private static final String CommandInfo = "save";
@@ -44,20 +43,17 @@ public class SaveCommand extends Command{
 
     @Override
     public boolean execute(Game game, Controller controller) throws CommandExecuteException {
-        try{
-            FileWriter input;
-            if (controller.isBoolOverwrite()) input = new FileWriter(inputFile, controller.isBoolOverwrite());
-            else input = new FileWriter(inputFile);
-            try(BufferedWriter bufInput = new BufferedWriter(input)){
-                game.store(bufInput);
-                controller.printSoutText("Game successfully saved to file; use load command to reload it.\n");
-            }catch (IOException  e){
-                throw new CommandExecuteException("The save command could not be completed because of a file fail.\n");
-            }
-        } catch(IOException | NullPointerException ioe){
+
+        try(FileWriter input = controller.isBoolOverwrite() ? new FileWriter(inputFile, controller.isBoolOverwrite()) : new FileWriter(inputFile);
+            BufferedWriter bufInput = new BufferedWriter(input)){
+
+            game.store(bufInput);
+            controller.printSoutText("Game successfully saved to file; use load command to reload it.\n");
+
+        }catch(IOException | NullPointerException ioe){
             throw new CommandExecuteException("The save command could not be completed because of a file fail.\n");
         }
-        return false;
+        return true;
     }
 
 

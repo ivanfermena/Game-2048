@@ -69,6 +69,8 @@ public enum GameType
                         controller.printSoutText("Please enter another filename: ");
                         newFilename = controller.readLineScanner();
                         controller.setBoolOverwrite(true);
+                        responseYorN = newFilename.toLowerCase().trim().split("\\s+");
+                        if (responseYorN.length != 1) throw new CommandParserException("Invalid filename: the filename contains spaces.\n");
                         newFilename = GameType.conﬁrmFileNameStringForWrite(newFilename, controller);
                         break;
                     default:

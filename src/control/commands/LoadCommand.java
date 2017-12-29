@@ -44,6 +44,7 @@ public class LoadCommand extends Command {
     public boolean execute(Game game, Controller controller) throws CommandExecuteException {
         try(FileReader input = new FileReader(this.inputFile);
             BufferedReader bufInput = new BufferedReader(input)){ // Habria que hacerlo resource pero habria que ver como controlar que sobreescriba bien
+
             controller.printSoutText("Game successfully loaded from file, 2048. " + game.load(bufInput) +"\n");
 
             bufInput.close();
