@@ -111,7 +111,7 @@ public class Board {
                     }
                     else
                     {
-                        setPoints =  merge;
+                        setPoints +=  merge;
                         setMoved = true;
                         j = j + controlDir;
                     }

@@ -19,12 +19,10 @@ public class PlayCommand extends Command {
 
     /** -Atributtes- */
     private GameType gameType;
-    private int initCells;
-    private long rand;
     private static final int defaultBoardSize = 4;
     private static final int defaultInitCells = 2;
     private static final String CommandInfo = "play";
-    private static final String HelpInfo = "<game>: Start a new game of one of the game types: original, fib, inverse.";
+    private static final String HelpInfo = "<game>: Start a new game of one of the game types: " + GameType.externaliseAll() + "\n";
 
     /**
      * Constructor de PlayCommand que dicta Commando a introducir y el texto de ayuda.
@@ -46,12 +44,12 @@ public class PlayCommand extends Command {
             return null;
         }else {
             if (commandWords.length == 2) {
-                PlayCommand playCommand = new PlayCommand(GameType.validGT(commandWords[1]));
+                PlayCommand playCommand = new PlayCommand(GameType.parse(commandWords[1]));
                 if (playCommand.gameType == null){
-                    throw new CommandParserException("Unknown game type for play command. ( original<orig>, fibonacci<fib> or inverse<inv> )\n");
+                    throw new CommandParserException("Unknown game type for play command. Options : < " +  GameType.externaliseAll() + " >\n");
                 } else return playCommand;
-            } else { // Se podria anadir diferencia caso tam = 1 y tam >2
-                throw new CommandParserException("Play must be followed only by a game type: original(orig), fibonacci(fib), inverse(inv)\n");
+            } else {
+                throw new CommandParserException("Play must be followed only by a game type: < " + GameType.externaliseAll() + " >\n");
             }
         }
     }
@@ -63,7 +61,7 @@ public class PlayCommand extends Command {
      */
     public boolean execute(Game game, Controller controller) {
 
-        boolean validInput = true;
+        boolean validInput;
 
         // CONTROL DE SIZE
         controller.printSoutText("\nPlease enter the size of the board: ");
@@ -77,55 +75,58 @@ public class PlayCommand extends Command {
         else {
             do {
                 try{
+                    validInput = Integer.parseInt(auxBoardSize) > 1;
+                    if(!validInput) throw new NumberFormatException();
                     game.setSize(Integer.parseInt(auxBoardSize));
-                    validInput = Integer.parseInt(auxBoardSize) <= 1;
                 }catch (NumberFormatException e){
-                    controller.printSoutText("ERROR: The size of the board must be positive and larger than 1.");
+                    validInput = false;
+                    controller.printSoutText("ERROR: The size of the board must be positive and larger than 1.\n");
                     controller.printSoutText("Please enter the size of the board again: ");
                     auxBoardSize = controller.readLineScanner();
                 }
-
             }while(!validInput);
         }
 
-        // CONTROL DE INICELL
-        validInput = true;
+        // CONTROL DE INITCELL
         controller.printSoutText("\nPlease enter the number of initial cells: ");
         String auxInitCells =  controller.readLineScanner();
 
         if (auxInitCells.isEmpty()) {
-            this.initCells = game.setInitCells(defaultInitCells);
+            game.setInitCells(defaultInitCells);
             controller.printSoutText("Using the default number of initial cells: " + defaultInitCells + "\n");
         }else {
             do {
-                validInput = (Integer.parseInt(auxInitCells) > Integer.parseInt(auxBoardSize) * Integer.parseInt(auxBoardSize));
                 try{
-                    game.setSize(Integer.parseInt(auxInitCells));
-
+                    validInput = (Integer.parseInt(auxInitCells) <= Integer.parseInt(auxBoardSize) * Integer.parseInt(auxBoardSize));
+                    if(!validInput) throw new NumberFormatException();
+                    game.setInitCells(Integer.parseInt(auxInitCells));
                 }catch (NumberFormatException e){
                     validInput = false;
-                    controller.printSoutText("ERROR: The number of initial cells must be less than the number of cells on the board");
-                    controller.printSoutText("Please enter the size of the board again: ");
-                    auxBoardSize = controller.readLineScanner();
+                    controller.printSoutText("ERROR: The number of initial cells must be less than the number of cells on the board.\n");
+                    controller.printSoutText("Please enter the number of the cells again: ");
+                    auxInitCells = controller.readLineScanner();
                 }
-
             }while(!validInput);
         }
 
         // CONTROL DE SEED
-        validInput = true;
-        controller.printSoutText("\nPlease enter the seed for the pseudo-random number generator: ");
-        String auxRand =  controller.readLineScanner();
-        try {
-            if (auxRand.isEmpty()) {
-                this.rand = game.setNewRandom(1000);
-                controller.printSoutText("Using the default seed for the pseudo-random number generator: " + this.rand + "\n");
-            } else game.setSeed(Long.parseLong(auxRand));
-        }catch (NumberFormatException e){
-            throw new NumberFormatException("The seed for the pseudo-random number generator must be a valid number. ");
+        do {
+            controller.printSoutText("\nPlease enter the seed for the pseudo-random number generator: ");
+            String auxRand =  controller.readLineScanner();
+            try {
+                if (auxRand.isEmpty()) {
+                    long rand = game.setNewRandom(1000);
+                    controller.printSoutText("Using the default seed for the pseudo-random number generator: " + rand + "\n");
+                } else game.setSeed(Long.parseLong(auxRand));
+                validInput = true;
+            } catch (NumberFormatException e) {
+                validInput = false;
+                controller.printSoutText("The seed for the pseudo-random number generator must be a valid number. ");
+            }
         }
+        while(!validInput);
 
-        game.setCurrentRules(GameRules.validGR(this.gameType));
+        game.setCurrentRules(this.gameType.getRules());
         controller.setAuxText("Has cambiado el juego actual\n");
         controller.setDoPrintAuxText(true);
         game.reset();

@@ -50,7 +50,6 @@ public class Game {
     }
 
     /**Getters and setters*/
-    public ArrayGameState getArrayGameState() { return arrayGameState; }
     public boolean isEndGame() {
         return endGame;
     }
@@ -145,29 +144,32 @@ public class Game {
     public void setSize(int size) {
         this.size = size;
     }
-    public int setInitCells(int initCells) {
-        return this.initCells = initCells;
+    public void setInitCells(int initCells) {
+        this.initCells = initCells;
     }
     private String parseGameInfo(){
         return this.initCells + "\t" + this.score + "\t" + this.currentRules.RulesName();
     }
     public void store(BufferedWriter bufInput) throws IOException{
-        bufInput.write("This file stores a saved 2048 game\r\n\n");
+        bufInput.write("This file stores a saved 2048 game");
+        bufInput.newLine();
+        bufInput.newLine();
         this.board.store(bufInput); // Guarda en el bufInput el board
         bufInput.write(this.parseGameInfo());
     }
 
-    public GameType load(BufferedReader bufInput) throws CommandExecuteException, IOException{
+    public GameType load(BufferedReader bufInput) throws CommandExecuteException, IOException, NumberFormatException{
         this.board.load(bufInput);
         this.size = this.board.get_boardSize();
         String[] infoGame = bufInput.readLine().split("\t");
         this.initCells = Integer.parseInt(infoGame[0]);
         this.score = Integer.parseInt(infoGame[1]);
-        this.setCurrentRules(GameRules.validGR(GameType.validGT(infoGame[2])));
-        if(this.currentRules == null) throw new CommandExecuteException("The file does not contain a saved game with a valid format.\n");
+        GameType gameType = GameType.parse(infoGame[2]);
+        if(gameType == null) throw new CommandExecuteException("The file does not contain a saved game with a valid format.\n");
         else {
+            this.setCurrentRules((gameType.getRules()));
             this.best = this.currentRules.getWinValue(this.board);
-            return GameType.validGT(infoGame[2]);
+            return gameType;
         }
     }
 

@@ -42,7 +42,7 @@ public class RulesInverse implements GameRules {
         if(self.getValue() == other.getValue()) {
             self.setValue(other.getValue() / 2);
             other.setValue(0);
-            merge = 4096 / self.getValue();
+            merge = 2048 / self.getValue();
         }
         return merge;
     }
@@ -67,6 +67,6 @@ public class RulesInverse implements GameRules {
 
     @Override
     public String RulesName() {
-        return "inv";
+        return "inverse";
     }
 }

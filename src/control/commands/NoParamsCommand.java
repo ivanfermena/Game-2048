@@ -32,10 +32,7 @@ public abstract class NoParamsCommand extends Command {
      */
     public Command parse(String[] commandWords, Controller controller)
     {
-        if(this.commandName.equals(commandWords[0]) && commandWords.length == 1) {
-            return this.createCommand();
-        }else {
-            return null;
-        }
+        if(this.commandName.equals(commandWords[0]) && commandWords.length == 1) return this.createCommand();
+        else return null;
     }
 }

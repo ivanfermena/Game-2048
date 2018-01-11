@@ -14,12 +14,12 @@ public class SaveCommand extends Command{
     private static final String CommandInfo = "save";
     private static final String HelpInfo = ": Save help.";
 
-    private File inputFile;
+    private String inputFile;
 
     /**
      * Constructor default: super --> Command
      */
-    public SaveCommand(File inputFile){
+    public SaveCommand(String inputFile){
         super(CommandInfo, HelpInfo);
         this.inputFile = inputFile;
     }
@@ -30,11 +30,11 @@ public class SaveCommand extends Command{
         if (!this.commandName.equals(commandWords[0])) {
             return null;
         }else {
-            if(commandWords.length == 1) throw new CommandParserException("Load command must be followed by a filename.\n");
+            if(commandWords.length == 1) throw new CommandParserException("Save command must be followed by a filename.\n");
             else if (commandWords.length==2) {
                 String auxStr = GameType.conﬁrmFileNameStringForWrite(commandWords[1], controller);
                 if (auxStr != null) {
-                    this.inputFile = new File(auxStr);
+                    this.inputFile = auxStr;
                     return new SaveCommand(inputFile);
                 } else throw new CommandParserException("Save must be followed by a valid filename.\n");
             } else throw new CommandParserException("Invalid Command: the filename contains spaces.\n");
@@ -46,7 +46,6 @@ public class SaveCommand extends Command{
 
         try(FileWriter input = controller.isBoolOverwrite() ? new FileWriter(inputFile, controller.isBoolOverwrite()) : new FileWriter(inputFile);
             BufferedWriter bufInput = new BufferedWriter(input)){
-
             game.store(bufInput);
             controller.printSoutText("Game successfully saved to file; use load command to reload it.\n");
 

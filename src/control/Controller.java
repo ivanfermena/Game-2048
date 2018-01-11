@@ -45,12 +45,7 @@ public class Controller {
     public void setAuxText(String auxText) {
         this.auxText = auxText;
     }
-
-    // ROMPE EL ENCAMPSULAMIENTO???
-
-    public boolean isBoolOverwrite() {
-        return boolOverwrite;
-    }
+    public boolean isBoolOverwrite() { return boolOverwrite; }
     public void setBoolOverwrite(boolean boolOverwrite) {
         this.boolOverwrite = boolOverwrite;
     }

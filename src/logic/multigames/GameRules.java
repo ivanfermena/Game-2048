@@ -88,18 +88,9 @@ public interface GameRules {
         ArrayAsList listPosLib = new ArrayAsList();
         board.checkLib(listPosLib);
         ArrayAsList.shuffle(listPosLib, rand);
-        for(int i = 0; i < numCells; i++)
-        {
+        for(int i = 0; i < numCells; i++) {
             Position position = (Position) listPosLib.get(i);
             addNewCellAt(board, position, rand);
-        }
-    }
-    static GameRules validGR(GameType gt){ // Cambiar si se anade juego nuevo(gametype nuevo)
-        switch(gt){
-            case ORIG: return new Rules2048();
-            case FIB: return new RulesFib();
-            case INV: return new RulesInverse();
-            default: return null;
         }
     }
     String RulesName();

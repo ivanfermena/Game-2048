@@ -43,11 +43,10 @@ public class LoadCommand extends Command {
     @Override
     public boolean execute(Game game, Controller controller) throws CommandExecuteException {
         try(FileReader input = new FileReader(this.inputFile);
-            BufferedReader bufInput = new BufferedReader(input)){ // Habria que hacerlo resource pero habria que ver como controlar que sobreescriba bien
+            BufferedReader bufInput = new BufferedReader(input)){
 
-            controller.printSoutText("Game successfully loaded from file, 2048. " + game.load(bufInput) +"\n");
+            controller.printSoutText("Game successfully loaded from file: " + game.load(bufInput).toString() +"\n");
 
-            bufInput.close();
             return true;
         } catch (IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException e) {
             throw new CommandExecuteException("The file does not contain a saved game with a valid format.\n");

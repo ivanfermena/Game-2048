@@ -66,6 +66,6 @@ public class Rules2048 implements GameRules {
 
     @Override
     public String RulesName() {
-        return "orig";
+        return "original";
     }
 }

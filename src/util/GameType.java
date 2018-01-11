@@ -2,35 +2,54 @@ package util;
 
 import control.Controller;
 import exceptions.CommandParserException;
+import logic.multigames.GameRules;
 import logic.multigames.games.Rules2048;
+import logic.multigames.games.RulesFib;
+import logic.multigames.games.RulesInverse;
 
 import java.io.File;
 
 public enum GameType
 {
-    ORIG("original"),FIB("fib"),INV("inverse");
 
-    private String nameEnumGame;
+    ORIG("2048, original version", "original", new Rules2048()),
+    FIB("2048, Fibonacci version", "fib", new RulesFib()),
+    INV("2048, inverse version", "inverse", new RulesInverse());
 
-    GameType(String nameEnumGame){
-        this.nameEnumGame = nameEnumGame;
-    }
+    private String userFriendlyName;
+    private String parameterName;
+    private GameRules correspondingRules;
 
     public static final String ﬁlenameInUseMsg = "The ﬁle already exists ; do you want to overwrite it ? (Y/N)";
 
-    public static GameType validGT(String gtText){
-        GameType gamety = null;
-        gtText = gtText.toUpperCase();
-        int i = 0;
-        while(i < GameType.values().length && gamety == null){
-            if(GameType.values()[i].name().equals(gtText)){
-                gamety = GameType.values()[i];
-                gamety.nameEnumGame = "" + GameType.values()[i];
-            }
-            i++;
-        }
-        return gamety;
+    GameType(String friendly, String param, GameRules rules){
+        userFriendlyName = friendly;
+        parameterName = param;
+        correspondingRules = rules;
     }
+    // precondition : param string contains only lower−case characters
+// used in PlayCommand and Game, in parse method and load method, respectively
+    public static GameType parse(String param) {
+        for (GameType gameType : GameType.values()) {
+            if (gameType.parameterName.equals(param))
+                return gameType;
+        }
+        return null;
+    }
+    // used in PlayCommand to build help message, and in parse method exception msg
+    public static String externaliseAll () {
+        String s = "";
+        for (GameType type : GameType.values())
+            s = s + " " + type.parameterName + ",";
+        return s.substring(1, s.length() - 1);
+    }
+    // used in Game when constructing object and when executing play command
+    public GameRules getRules() { return correspondingRules; }
+    // used in Game in store method
+    public String externalise () { return parameterName; }
+    // used PlayCommand and LoadCommand, in parse methods
+// in ack message and success message, respectively
+    public String toString() {return userFriendlyName; }
 
     public static String conﬁrmFileNameStringForWrite(String ﬁlenameString, Controller controller) throws CommandParserException {
         String loadName = ﬁlenameString;
