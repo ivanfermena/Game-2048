@@ -64,8 +64,4 @@ public class Rules2048 implements GameRules {
         return getWinValue(board) == conditionWin;
     }
 
-    @Override
-    public String RulesName() {
-        return "original";
-    }
 }

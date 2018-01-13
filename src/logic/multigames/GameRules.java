@@ -93,5 +93,4 @@ public interface GameRules {
             addNewCellAt(board, position, rand);
         }
     }
-    String RulesName();
 }

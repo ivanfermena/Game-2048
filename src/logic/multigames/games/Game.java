@@ -32,10 +32,12 @@ public class Game {
     private ArrayGameState arrayGameState;
     private GameRules currentRules;
     private long seed;
+    private GameType currentGameType;
 
     /** -Constructor- */
-    public Game(int size, int initCells, long seed, GameRules currentRules) {
+    public Game(int size, int initCells, long seed, GameRules currentRules, GameType currentGameType) {
         this.currentRules = currentRules;
+        this.currentGameType = currentGameType;
         this.best = 0;
         this.size = size;
         this.initCells = initCells;
@@ -57,6 +59,7 @@ public class Game {
         this.endGame = endGame;
     }
     public void setCurrentRules(GameRules currentRules) { this.currentRules = currentRules; }
+    public void setCurrentGameType(GameType currentGameType) { this.currentGameType = currentGameType; }
 
     /**
      * Método que ejecuta un movimiento en la dirección dir sobre el tablero, actualiza marcador Score y el valor Best
@@ -148,7 +151,7 @@ public class Game {
         this.initCells = initCells;
     }
     private String parseGameInfo(){
-        return this.initCells + "\t" + this.score + "\t" + this.currentRules.RulesName();
+        return this.initCells + "\t" + this.score + "\t" + this.currentGameType.externalise();
     }
     public void store(BufferedWriter bufInput) throws IOException{
         bufInput.write("This file stores a saved 2048 game");
@@ -167,7 +170,8 @@ public class Game {
         GameType gameType = GameType.parse(infoGame[2]);
         if(gameType == null) throw new CommandExecuteException("The file does not contain a saved game with a valid format.\n");
         else {
-            this.setCurrentRules((gameType.getRules()));
+            this.currentGameType = gameType;
+            this.currentRules = gameType.getRules();
             this.best = this.currentRules.getWinValue(this.board);
             return gameType;
         }

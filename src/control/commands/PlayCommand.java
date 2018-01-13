@@ -127,6 +127,7 @@ public class PlayCommand extends Command {
         while(!validInput);
 
         game.setCurrentRules(this.gameType.getRules());
+        game.setCurrentGameType(this.gameType);
         controller.setAuxText("Has cambiado el juego actual\n");
         controller.setDoPrintAuxText(true);
         game.reset();

@@ -47,7 +47,7 @@ public class SaveCommand extends Command{
         try(FileWriter input = controller.isBoolOverwrite() ? new FileWriter(inputFile, controller.isBoolOverwrite()) : new FileWriter(inputFile);
             BufferedWriter bufInput = new BufferedWriter(input)){
             game.store(bufInput);
-            controller.printSoutText("Game successfully saved to file; use load command to reload it.\n");
+            controller.printSoutText("Game successfully saved to file '" + this.inputFile + "' ; use load command to reload it.\n");
 
         }catch(IOException | NullPointerException ioe){
             throw new CommandExecuteException("The save command could not be completed because of a file fail.\n");

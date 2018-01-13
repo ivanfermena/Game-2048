@@ -65,8 +65,4 @@ public class RulesInverse implements GameRules {
         return getWinValue(board) == this.conditionWin;
     }
 
-    @Override
-    public String RulesName() {
-        return "inverse";
-    }
 }

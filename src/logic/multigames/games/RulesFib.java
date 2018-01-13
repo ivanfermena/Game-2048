@@ -65,9 +65,4 @@ public class RulesFib implements GameRules {
     public boolean win(Board board) {
         return getWinValue(board) == conditionWin;
     }
-
-    @Override
-    public String RulesName() {
-        return "fib";
-    }
 }

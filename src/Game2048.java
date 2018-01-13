@@ -8,6 +8,7 @@ import control.Controller;
 import logic.multigames.GameRules;
 import logic.multigames.games.Game;
 import logic.multigames.games.Rules2048;
+import util.GameType;
 
 import java.util.Random;
 import java.util.Scanner;
@@ -27,10 +28,10 @@ public class Game2048 {
             }
 
             GameRules rules = new Rules2048();
-            Game game = new Game(Integer.parseInt(args[0]),Integer.parseInt(args[1]), seed, rules);
+            GameType gameType = GameType.ORIG;
+            Game game = new Game(Integer.parseInt(args[0]),Integer.parseInt(args[1]), seed, rules, gameType);
             Controller ctr = new Controller(game, sc);
             ctr.run();
-
         }catch (NumberFormatException e){
             System.out.println(e.getMessage());
         }
