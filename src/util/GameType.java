@@ -11,7 +11,6 @@ import java.io.File;
 
 public enum GameType
 {
-
     ORIG("2048, original version", "original", new Rules2048()),
     FIB("2048, Fibonacci version", "fib", new RulesFib()),
     INV("2048, inverse version", "inverse", new RulesInverse());
@@ -27,8 +26,14 @@ public enum GameType
         parameterName = param;
         correspondingRules = rules;
     }
-    // precondition : param string contains only lower−case characters
-// used in PlayCommand and Game, in parse method and load method, respectively
+    //
+
+    /**
+     * precondition : param string contains only lower−case characters
+     * used in PlayCommand and Game, in parse method and load method, respectively
+     * @param param
+     * @return
+     */
     public static GameType parse(String param) {
         for (GameType gameType : GameType.values()) {
             if (gameType.parameterName.equals(param))
@@ -36,21 +41,41 @@ public enum GameType
         }
         return null;
     }
-    // used in PlayCommand to build help message, and in parse method exception msg
+
+    /**
+     * Used in PlayCommand to build help message, and in parse method exception ms
+     * @return
+     */
     public static String externaliseAll () {
         String s = "";
         for (GameType type : GameType.values())
             s = s + " " + type.parameterName + ",";
         return s.substring(1, s.length() - 1);
     }
-    // used in Game when constructing object and when executing play command
+
+    /**
+     * Used in Game when constructing object and when executing play command
+     */
     public GameRules getRules() { return correspondingRules; }
-    // used in Game in store method
+
+    /**
+     *  Used in Game in store method
+     */
     public String externalise () { return parameterName; }
-    // used PlayCommand and LoadCommand, in parse methods
-// in ack message and success message, respectively
+
+    /**
+     * Used PlayCommand and LoadCommand, in parse methods
+     * in ack message and success message, respectively
+     */
     public String toString() {return userFriendlyName; }
 
+    /**
+     * Metodo que gestiona la confirmacion del nombre de fichero
+     * @param ﬁlenameString
+     * @param controller
+     * @return
+     * @throws CommandParserException
+     */
     public static String conﬁrmFileNameStringForWrite(String ﬁlenameString, Controller controller) throws CommandParserException {
         String loadName = ﬁlenameString;
         boolean ﬁlename_conﬁrmed = false;
@@ -70,6 +95,13 @@ public enum GameType
         return loadName;
     }
 
+    /**
+     * Metodo que controla y gestiona si se sobreescribe un fichero si este existe
+     * @param filenameString
+     * @param controller
+     * @return
+     * @throws CommandParserException
+     */
     private static String getLoadName(String filenameString, Controller controller) throws CommandParserException {
         String newFilename = null;
         boolean yesOrNo = false;

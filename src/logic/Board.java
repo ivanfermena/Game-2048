@@ -271,11 +271,21 @@ public class Board {
         return vectorStr;
     }
 
-
+    /**
+     * Metodo que gestiona la lectura de fichero y la informacion de board
+     * @param bufInput
+     * @throws IOException
+     */
     public void store(BufferedWriter bufInput) throws IOException{
         bufInput.write(parseGetState(getState()));
     }
 
+    /**
+     * Metodo que gestiona la lectura de fichero y trata la informacion de Board
+     * @param bufInput
+     * @throws IOException
+     * @throws CommandExecuteException
+     */
     public void load(BufferedReader bufInput) throws IOException, CommandExecuteException{
         if (!bufInput.readLine().equals("This file stores a saved 2048 game")) throw new CommandExecuteException("Invalid filename: The file does not use a specific structure.\n");
         bufInput.readLine(); // Linea de blancos

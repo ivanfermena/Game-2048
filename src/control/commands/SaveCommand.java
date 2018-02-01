@@ -1,5 +1,10 @@
 package control.commands;
 
+/** Autores: Alberto Pastor Moreno e Ivan Fernandez Mena - 2E -
+ *
+ * Funcion: Clase que controla el commando que realiza la escritura de un juego en un fichero
+ */
+
 import control.Controller;
 import exceptions.CommandExecuteException;
 import exceptions.CommandParserException;
@@ -24,6 +29,13 @@ public class SaveCommand extends Command{
         this.inputFile = inputFile;
     }
 
+    /**
+     * Metodo que parsea los comandos especificos de save
+     * @param commandWords String[] --> Array de candenas que tiene el comando lanzado para tratarlo
+     * @param controller Controller --> Entorno al que se refiere o en donde se realiza la accion.
+     * @return
+     * @throws CommandParserException
+     */
     @Override
     public Command parse(String[] commandWords, Controller controller) throws CommandParserException {
 
@@ -41,6 +53,13 @@ public class SaveCommand extends Command{
         }
     }
 
+    /**
+     * Metodo que ejecuta y comienza la lectura del fichero, lanza el metodo load de game
+     * @param game Game --> Juego al que le afecta la accion a realizar.
+     * @param controller Controller --> Entorno al que se refiere o en donde se realiza la accion.
+     * @return
+     * @throws CommandExecuteException
+     */
     @Override
     public boolean execute(Game game, Controller controller) throws CommandExecuteException {
 

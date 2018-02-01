@@ -150,9 +150,20 @@ public class Game {
     public void setInitCells(int initCells) {
         this.initCells = initCells;
     }
+
+    /**
+     * Metodo que parsea la informacion de game en el guardado y load
+     * @return
+     */
     private String parseGameInfo(){
         return this.initCells + "\t" + this.score + "\t" + this.currentGameType.externalise();
     }
+
+    /**
+     * Metodo que gestiona la escritura del fichero y trata la informacion de game.
+     * @param bufInput
+     * @throws IOException
+     */
     public void store(BufferedWriter bufInput) throws IOException{
         bufInput.write("This file stores a saved 2048 game");
         bufInput.newLine();
@@ -161,6 +172,14 @@ public class Game {
         bufInput.write(this.parseGameInfo());
     }
 
+    /**
+     * Metodo que gestiona la lectura de un ficheros y lee la informacion necesaria de game
+     * @param bufInput
+     * @return
+     * @throws CommandExecuteException
+     * @throws IOException
+     * @throws NumberFormatException
+     */
     public GameType load(BufferedReader bufInput) throws CommandExecuteException, IOException, NumberFormatException{
         this.board.load(bufInput);
         this.size = this.board.get_boardSize();
